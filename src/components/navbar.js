@@ -30,10 +30,21 @@ const useStyles = makeStyles({
 
 export default function Navbar () {
   const [state, dispatch] = useContext(storeContext);
+  const [anchorEl, setAnchorEl] = useState(null);
   const classes = useStyles();
 
-  const showNotifications = state.authenticated 
-      ?  <Notification />     
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  }
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  }
+
+  const showNotificationIcons = state.authenticated 
+      ? <Badge badgeContent={state.notifications.length} color="secondary">
+          <NotificationsIcon onClick={handleClick} className={classes.icon} />
+        </Badge>    
       :
       "";
   
@@ -44,7 +55,20 @@ export default function Navbar () {
           Jemaw
         </Typography>
         <div className={classes.notification}>
-          {showNotifications}
+          {showNotificationIcons}
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleClose}
+            >
+              {state.notifications.map(not => (
+                <MenuItem 
+                  key={not.id} 
+                  >
+                    <Notification not={not} handleClose={handleClose}/>
+                  </MenuItem>
+              ))}
+            </Menu>
         </div>
 			</Toolbar>            
 		</AppBar>

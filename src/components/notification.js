@@ -11,46 +11,34 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Typography from '@material-ui/core/Typography';
 
 import { storeContext } from '../context/store';
+import PostDetails from './postDetails';
 
 const useStyles = makeStyles({
-  root: {
-    position: 'absolute',
-    right: '20px'
-  }
-})
+});
 
-export default function Notification () {
-  const [anchorEl, setAnchorEl] = useState(null);
+export default function Notification ({not, handleClose}) {
+  const [detailsOpen, setDetailsOpen] = useState(null);
   const [state, dispatch] = useContext(storeContext);
   const classes = useStyles();
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
+  const post = state.posts.filter(post => post.id === not.post_id )[0];
+  const handleOpen = () => {
+    setDetailsOpen(true);
   }
 
-  const handleClose = () => {
-    setAnchorEl(null);
+  const handleDetailsClose = () => {
+    handleClose();
+    // setDetailsOpen(false);
   }
-       
+  const showDetails = detailsOpen ? 
+      <PostDetails open={detailsOpen} post={post} handleClose={handleDetailsClose} />
+      :
+      '';
+  console.log(detailsOpen);
 	return (
-        <div>
-          <Badge badgeContent={state.notifications.length} color="secondary">
-          <NotificationsIcon onClick={handleClick} className={classes.icon} />
-        </Badge>
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleClose}
-            >
-              {state.notifications.map(not => (
-                <MenuItem 
-                  key={not.id} 
-                  onClick={handleClose}
-                  >
-                    {not.sender} {not.type === 'like' ? 'liked' : 'commented on'} your post
-                  </MenuItem>
-              ))}
-            </Menu>
-        </div>
+      <Typography
+       variant="subtitle2"
+       onClick={handleOpen}
+       > {showDetails}
+       {not.sender} {not.type === 'like' ? 'liked' : 'commented on'} your post</Typography> 
 	)
 }

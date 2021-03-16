@@ -69,12 +69,12 @@ const useStyles = makeStyles ({
     top: 0,
   }
 })
-export default function PostDetails({post}) {
+export default function PostDetails(props) {
   const [state, dispatch] = useContext(storeContext);
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
-  const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const { post, open, handleClose} = props;
   const classes = useStyles();
   const id = post.id;
 
@@ -88,6 +88,7 @@ export default function PostDetails({post}) {
             setLoading(false);
           })
         .catch(err => {
+          setLoading(false);
           console.log(err);
         });
       }
@@ -100,13 +101,6 @@ export default function PostDetails({post}) {
     setNewComment(e.target.value);
   }
 
-  const handleOpen = () => {
-    setOpen(true);
-  }
-
-  const handleClose = () => {
-    setOpen(false);
-  }
 
   const handleSubmit = () => {
     const commentData = {
@@ -135,7 +129,6 @@ export default function PostDetails({post}) {
 
   return (
       <div>
-        <CommentIcon onClick={handleOpen} />
         <Dialog open={open} maxWidth="xs">
           <DialogTitle className={classes.title}>
             <CloseIcon className={classes.closeIcon} onClick={handleClose} />
